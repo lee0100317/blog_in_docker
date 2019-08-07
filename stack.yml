@@ -1,0 +1,42 @@
+version: '3.3'
+
+services:
+
+   db:
+     image: mysql:5.7.25
+     volumes:
+       - ./mysql:/var/lib/mysql
+     environment:
+       MYSQL_ROOT_PASSWORD: wordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:5.0.3-php7.1-apache
+     volumes:
+      - ./wordpress:/var/www/html
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+       
+   nginx:
+    image: nginx:1.15.8
+    volumes:
+      - ./etc/nginx:/etc/nginx 
+      - ./log/nginx:/var/log/nginx
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+        protocol: tcp
+#      - "443:443"     
+      - target: 443
+        published: 443
+        mode: host
+        protocol: tcp 	 
+
+
